@@ -4,7 +4,7 @@ export default class Rules extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="info">
                 <strong>The rules for playing Memory Game</strong>
                 <ul>
                     <li>Cards are mixed up and laid in rows, face down.</li>

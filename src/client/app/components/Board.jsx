@@ -15,7 +15,7 @@ export default class Board extends React.Component {
         return (
             <div>
                 <StatusBar message={message}/>
-                <div>{cards}</div>
+                <div className="board">{cards}</div>
                 <Button>New Game</Button>
                 <Rules/>
             </div>

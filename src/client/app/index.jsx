@@ -14,8 +14,8 @@ class MemoryGame extends React.Component {
 const CARDS = [
     {value: 0, opened: false, locked: false},
     {value: 0, opened: false, locked: false},
-    {value: 1, opened: false, locked: false},
-    {value: 1, opened: false, locked: false},
+    {value: 1, opened: true, locked: false},
+    {value: 1, opened: true, locked: false},
     {value: 2, opened: false, locked: false},
     {value: 2, opened: false, locked: false},
     {value: 3, opened: false, locked: false},
