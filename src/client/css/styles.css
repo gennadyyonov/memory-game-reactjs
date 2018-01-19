@@ -16,6 +16,15 @@
     float: left;
 }
 
+.playing-card {
+    float: left;
+}
+
+.playing-card > img {
+    height: 150px;
+    border-radius: 10px;
+}
+
 .open {
     background-color: darkorange;
     transition: 500ms;

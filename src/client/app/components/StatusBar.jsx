@@ -5,7 +5,7 @@ export default class StatusBar extends React.Component {
     render() {
         const status = this.props.status;
         return (
-            <div className={'new-line ' + status.level}>{status.message}</div>
+            <div className={'new-line ' + status.level.value}>{status.message}</div>
         );
     }
 }

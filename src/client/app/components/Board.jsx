@@ -2,8 +2,16 @@ import React from 'react';
 import ArrayUtils from './ArrayUtils.jsx';
 import StatusBar from './StatusBar.jsx';
 import Card from './Card.jsx';
-import Button from './Button.jsx';
+import PlayingCard from './PlayingCard.jsx';
+import NewGame from './NewGame.jsx';
 import Rules from './Rules.jsx';
+
+const Level = {
+    INFO: {value: "info"},
+    SUCCESS: {value: "success"},
+    WARNING: {value: "warning"},
+    ERROR: {value: "error"}
+};
 
 export default class Board extends React.Component {
 
@@ -35,11 +43,16 @@ export default class Board extends React.Component {
         const pairs = this.props.pairs;
         let values = [];
         for (let i = 0; i < pairs; i++) {
-            values.push(i);
-            values.push(i);
+            const value = this.playingCard() ? PlayingCard.randomCardImage() : i;
+            values.push(value);
+            values.push(value);
         }
         ArrayUtils.shuffle(values);
         return values;
+    }
+
+    playingCard() {
+        return false;
     }
 
     handleCardClick(index) {
@@ -94,15 +107,19 @@ export default class Board extends React.Component {
     render() {
         const status = this.status();
         const cards = [];
+        const playingCard = this.playingCard();
         this.state.cards.forEach((card, index) => {
-            cards.push(<Card key={index} index={index} card={card} onCardClick={this.handleCardClick}/>);
+            let item = (playingCard) ?
+                <PlayingCard key={index} index={index} card={card} onCardClick={this.handleCardClick}/> :
+                <Card key={index} index={index} card={card} onCardClick={this.handleCardClick}/>;
+            cards.push(item);
         });
         return (
             <div>
                 <StatusBar status={status}/>
                 <div className="board new-line">{cards}</div>
-                <Button onButtonClick={this.handleNewGameClick}>New Game</Button>
-                <Rules/>
+                <NewGame onButtonClick={this.handleNewGameClick}/>
+                <Rules level={Level.INFO}/>
             </div>
         );
     }
@@ -113,13 +130,13 @@ export default class Board extends React.Component {
         const cards = this.state.cards;
         const left = maxNumberOfAttempts - attempt;
         if (left <= 0) {
-            return {message: 'You Loose...', level: 'error'};
+            return {message: 'You Loose...', level: Level.ERROR};
         }
         for (let i = 0; i < cards.length; i++) {
             if (!cards[i].opened) {
-                return {message: left + ' attempts left.', level: 'warning'};
+                return {message: left + ' attempts left.', level: Level.WARNING};
             }
         }
-        return {message: 'You Win!', level: 'success'};
+        return {message: 'You Win!', level: Level.SUCCESS};
     }
 }

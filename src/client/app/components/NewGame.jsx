@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class Button extends React.Component {
+export default class NewGame extends React.Component {
 
     constructor(props) {
         super(props);
@@ -15,7 +15,7 @@ export default class Button extends React.Component {
     render() {
         return (
             <div className="new-line">
-                <button className="button shadow-button" onClick={this.handleClick}>{this.props.children}</button>
+                <button className="button shadow-button" onClick={this.handleClick}>New Game</button>
             </div>
         );
     }
