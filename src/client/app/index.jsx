@@ -6,7 +6,7 @@ class MemoryGame extends React.Component {
 
     render() {
         return (
-            <Board pairs={4} maxNumberOfAttempts={10} attempt={0}/>
+            <Board pairs={4} maxNumberOfAttempts={10}/>
         );
     }
 }
