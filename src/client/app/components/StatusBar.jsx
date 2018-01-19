@@ -3,9 +3,9 @@ import React from 'react';
 export default class StatusBar extends React.Component {
 
     render() {
-        const message = this.props.message;
+        const status = this.props.status;
         return (
-            <div className="warning">{message}</div>
+            <div className={'new-line ' + status.level}>{status.message}</div>
         );
     }
 }

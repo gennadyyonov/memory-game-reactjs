@@ -10,8 +10,15 @@ export default class Board extends React.Component {
     constructor(props) {
         super(props);
 
+        this.state = this.newGame();
+
+        this.handleCardClick = this.handleCardClick.bind(this);
+        this.handleNewGameClick = this.handleNewGameClick.bind(this);
+    }
+
+    newGame() {
         const cards = this.initCards();
-        this.state = {cards: cards, attempt: 0};
+        return {cards: cards, attempt: 0, selected: null};
     }
 
     initCards() {
@@ -35,35 +42,84 @@ export default class Board extends React.Component {
         return values;
     }
 
+    handleCardClick(index) {
+        const cards = this.state.cards;
+        let selected = this.state.selected;
+        let card = cards[index];
+        if (card.opened || card.locked) {
+            return;
+        }
+        let attempt = this.state.attempt;
+        card.opened = true;
+        this.setState({ cards: cards });
+        if (selected === null) {
+            selected = {index: index, card: card};
+        } else {
+            if (selected.card.value !== card.value) {
+                attempt += 1;
+                let lh = selected.card;
+                let rh = card;
+                let self = this;
+                setTimeout(function () {
+                    lh.opened = false;
+                    rh.opened = false;
+                    self.setState({ cards: cards });
+                    self.gameOver();
+                }, 700);
+            } else {
+                this.gameOver();
+            }
+            selected = null;
+        }
+        this.setState({ selected: selected, attempt: attempt});
+    }
+
+    gameOver() {
+        let i;
+        let attempt = this.state.attempt;
+        const cards = this.state.cards;
+        let left = this.props.maxNumberOfAttempts - attempt;
+        if (left <= 0) {
+            for (i = 0; i < cards.length; i++) {
+                cards[i].locked = true;
+            }
+            this.setState({ cards: cards});
+        }
+    }
+
+    handleNewGameClick() {
+        this.setState(this.newGame());
+    }
+
     render() {
-        const message = this.statusMessage();
+        const status = this.status();
         const cards = [];
         this.state.cards.forEach((card, index) => {
-            cards.push(<Card key={index} card={card}/>);
+            cards.push(<Card key={index} index={index} card={card} onCardClick={this.handleCardClick}/>);
         });
         return (
             <div>
-                <StatusBar message={message}/>
-                <div className="board">{cards}</div>
-                <Button>New Game</Button>
+                <StatusBar status={status}/>
+                <div className="board new-line">{cards}</div>
+                <Button onButtonClick={this.handleNewGameClick}>New Game</Button>
                 <Rules/>
             </div>
         );
     }
 
-    statusMessage() {
+    status() {
         const maxNumberOfAttempts = this.props.maxNumberOfAttempts;
         const attempt = this.state.attempt;
         const cards = this.state.cards;
         const left = maxNumberOfAttempts - attempt;
         if (left <= 0) {
-            return 'You Loose...';
+            return {message: 'You Loose...', level: 'error'};
         }
         for (let i = 0; i < cards.length; i++) {
             if (!cards[i].opened) {
-                return left + ' attempts left.';
+                return {message: left + ' attempts left.', level: 'warning'};
             }
         }
-        return 'You Win!';
+        return {message: 'You Win!', level: 'success'};
     }
 }

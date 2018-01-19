@@ -1,6 +1,5 @@
 .board {
     width: 450px;
-    clear: both;
 }
 
 .card {
@@ -14,7 +13,7 @@
     font-family: Verdana, serif;
     border-radius: 10px;
     border: 1px solid black;
-    float: right;
+    float: left;
 }
 
 .open {
@@ -26,6 +25,10 @@
     cursor: pointer;
     background-color: cornflowerblue;
     transition: 500ms;
+}
+
+.new-line {
+    clear: both;
 }
 
 .info, .success, .warning, .error, .validation {
