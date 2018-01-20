@@ -5,32 +5,27 @@ import Card from './Card.jsx';
 import PlayingCard from './PlayingCard.jsx';
 import NewGame from './NewGame.jsx';
 import Rules from './Rules.jsx';
-
-const Level = {
-    INFO: {value: "info"},
-    SUCCESS: {value: "success"},
-    WARNING: {value: "warning"},
-    ERROR: {value: "error"}
-};
+import {CardType, Level} from './Enums.jsx';
+import Settings from './Settings.jsx';
 
 export default class Board extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.state = this.newGame();
+        this.state = this.newGame(props.cardType);
 
         this.handleCardClick = this.handleCardClick.bind(this);
         this.handleNewGameClick = this.handleNewGameClick.bind(this);
     }
 
-    newGame() {
-        const cards = this.initCards();
-        return {cards: cards, attempt: 0, selected: null};
+    newGame(cardType) {
+        const cards = this.initCards(cardType);
+        return {cards: cards, attempt: 0, selected: null, cardType: cardType};
     }
 
-    initCards() {
-        const values = this.randomValues();
+    initCards(cardType) {
+        const values = this.randomValues(cardType);
         let cards = [];
         for (let i = 0; i < values.length; i++) {
             let card = {value: values[i], opened: false, locked: false};
@@ -39,20 +34,16 @@ export default class Board extends React.Component {
         return cards;
     }
 
-    randomValues() {
+    randomValues(cardType) {
         const pairs = this.props.pairs;
         let values = [];
         for (let i = 0; i < pairs; i++) {
-            const value = this.playingCard() ? PlayingCard.randomCardImage() : i;
+            const value = Settings.isPlayingCard(cardType) ? PlayingCard.randomCardImage() : i;
             values.push(value);
             values.push(value);
         }
         ArrayUtils.shuffle(values);
         return values;
-    }
-
-    playingCard() {
-        return false;
     }
 
     handleCardClick(index) {
@@ -100,14 +91,15 @@ export default class Board extends React.Component {
         }
     }
 
-    handleNewGameClick() {
-        this.setState(this.newGame());
+    handleNewGameClick(cardType) {
+        this.setState(this.newGame(cardType));
     }
 
     render() {
         const status = this.status();
         const cards = [];
-        const playingCard = this.playingCard();
+        const cardType = this.state.cardType;
+        const playingCard = Settings.isPlayingCard(cardType);
         this.state.cards.forEach((card, index) => {
             let item = (playingCard) ?
                 <PlayingCard key={index} index={index} card={card} onCardClick={this.handleCardClick}/> :
@@ -118,7 +110,7 @@ export default class Board extends React.Component {
             <div>
                 <StatusBar status={status}/>
                 <div className="board new-line">{cards}</div>
-                <NewGame onButtonClick={this.handleNewGameClick}/>
+                <NewGame cardType={cardType} onButtonClick={this.handleNewGameClick}/>
                 <Rules level={Level.INFO}/>
             </div>
         );
@@ -140,3 +132,9 @@ export default class Board extends React.Component {
         return {message: 'You Win!', level: Level.SUCCESS};
     }
 }
+
+Board.defaultProps = {
+    cardType: CardType.NUMBER,
+    pairs: 4,
+    maxNumberOfAttempts: 10
+};
