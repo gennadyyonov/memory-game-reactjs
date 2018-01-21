@@ -1,37 +1,38 @@
 import React from 'react';
-import Settings from './Settings.jsx';
+import DropDown from './DropDown.jsx';
+import {CardType, Round} from "./Enums.jsx";
 
 export default class NewGame extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.state = {cardType: props.cardType};
+        this.state = {cardType: props.cardType, round: props.round};
 
         this.handleClick = this.handleClick.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+        this.handleCardTypeChange = this.handleCardTypeChange.bind(this);
+        this.handleRoundChange = this.handleRoundChange.bind(this);
     }
 
     handleClick() {
-        this.props.onButtonClick(this.state.cardType);
+        this.props.onButtonClick(this.state.cardType, this.state.round);
     }
 
-    handleChange(event) {
-        const cardType = Settings.getCardTypeByValue(event.target.value);
+    handleCardTypeChange(cardType) {
         this.setState({cardType: cardType});
     }
 
+    handleRoundChange(round) {
+        this.setState({round: round});
+    }
+
     render() {
-        const cardTypes = Settings.cardTypeOptions();
         return (
             <div className="new-line">
-                <div className="mainselection playing-card-selection">
-                    <label>
-                        <select value={this.state.cardType.value} onChange={this.handleChange}>
-                            {cardTypes}
-                        </select>
-                    </label>
-                </div>
+                <DropDown clazz="playing-card-selection" enumType={CardType}
+                          selected={this.state.cardType} onDownChange={this.handleCardTypeChange}/>
+                <DropDown clazz="round-selection" enumType={Round}
+                          selected={this.state.round} onDownChange={this.handleRoundChange}/>
                 <button className="button shadow-button" onClick={this.handleClick}>New Game</button>
             </div>
         );

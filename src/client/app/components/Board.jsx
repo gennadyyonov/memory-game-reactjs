@@ -5,7 +5,7 @@ import Card from './Card.jsx';
 import PlayingCard from './PlayingCard.jsx';
 import NewGame from './NewGame.jsx';
 import Rules from './Rules.jsx';
-import {CardType, Level} from './Enums.jsx';
+import {CardType, Level, Round} from './Enums.jsx';
 import Settings from './Settings.jsx';
 
 export default class Board extends React.Component {
@@ -13,19 +13,19 @@ export default class Board extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = this.newGame(props.cardType);
+        this.state = this.newGame(props.cardType, props.round);
 
         this.handleCardClick = this.handleCardClick.bind(this);
         this.handleNewGameClick = this.handleNewGameClick.bind(this);
     }
 
-    newGame(cardType) {
-        const cards = this.initCards(cardType);
-        return {cards: cards, attempt: 0, selected: null, cardType: cardType};
+    newGame(cardType, round) {
+        const cards = this.initCards(cardType, round);
+        return {cards: cards, attempt: 0, selected: null, cardType: cardType, round: round};
     }
 
-    initCards(cardType) {
-        const values = this.randomValues(cardType);
+    initCards(cardType, round) {
+        const values = this.randomValues(cardType, round);
         let cards = [];
         for (let i = 0; i < values.length; i++) {
             let card = {value: values[i], opened: false, locked: false};
@@ -34,8 +34,8 @@ export default class Board extends React.Component {
         return cards;
     }
 
-    randomValues(cardType) {
-        const pairs = this.props.pairs;
+    randomValues(cardType, round) {
+        const pairs = round.pairs;
         let values = [];
         for (let i = 0; i < pairs; i++) {
             const value = Settings.isPlayingCard(cardType) ? PlayingCard.randomCardImage() : i;
@@ -82,7 +82,7 @@ export default class Board extends React.Component {
         let i;
         let attempt = this.state.attempt;
         const cards = this.state.cards;
-        let left = this.props.maxNumberOfAttempts - attempt;
+        let left = this.state.round.maxNumberOfAttempts - attempt;
         if (left <= 0) {
             for (i = 0; i < cards.length; i++) {
                 cards[i].locked = true;
@@ -91,8 +91,8 @@ export default class Board extends React.Component {
         }
     }
 
-    handleNewGameClick(cardType) {
-        this.setState(this.newGame(cardType));
+    handleNewGameClick(cardType, round) {
+        this.setState(this.newGame(cardType, round));
     }
 
     render() {
@@ -110,14 +110,14 @@ export default class Board extends React.Component {
             <div>
                 <StatusBar status={status}/>
                 <div className="board new-line">{cards}</div>
-                <NewGame cardType={cardType} onButtonClick={this.handleNewGameClick}/>
+                <NewGame cardType={cardType} round={this.state.round} onButtonClick={this.handleNewGameClick}/>
                 <Rules level={Level.INFO}/>
             </div>
         );
     }
 
     status() {
-        const maxNumberOfAttempts = this.props.maxNumberOfAttempts;
+        const maxNumberOfAttempts = this.state.round.maxNumberOfAttempts;
         const attempt = this.state.attempt;
         const cards = this.state.cards;
         const left = maxNumberOfAttempts - attempt;
@@ -135,6 +135,5 @@ export default class Board extends React.Component {
 
 Board.defaultProps = {
     cardType: CardType.NUMBER,
-    pairs: 4,
-    maxNumberOfAttempts: 10
+    round: Round.ROUND_1
 };

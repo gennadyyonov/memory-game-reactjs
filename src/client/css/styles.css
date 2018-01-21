@@ -117,3 +117,15 @@
     background-position: 149px center;
     margin: 4px 10px;
 }
+
+.round-selection select {
+    width: 158px;
+    *width: 130px;
+}
+
+.round-selection {
+    width: 130px;
+    float: left;
+    background-position: 99px center;
+    margin: 4px 10px;
+}

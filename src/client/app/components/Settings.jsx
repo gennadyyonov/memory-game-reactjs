@@ -3,28 +3,28 @@ import {CardType} from './Enums.jsx';
 
 export default class Settings {
 
-    static cardTypeOptions() {
-        const cardTypes = [];
-        const keys = Object.keys(CardType);
-        for (let i = 0; i < keys.length; i++) {
-            const cardType = CardType[keys[i]];
-            cardTypes.push(<option key={i} value={cardType.value}>{cardType.name}</option>)
-        }
-        return cardTypes;
+    static isPlayingCard(cardType) {
+        return cardType === CardType.PLAYING;
     }
 
-    static getCardTypeByValue(value) {
-        const keys = Object.keys(CardType);
+    static options(enumType) {
+        const options = [];
+        const keys = Object.keys(enumType);
         for (let i = 0; i < keys.length; i++) {
-            const cardType = CardType[keys[i]];
-            if (cardType.value === value) {
-                return cardType;
+            const value = enumType[keys[i]];
+            options.push(<option key={i} value={value.value}>{value.name}</option>)
+        }
+        return options;
+    }
+
+    static getEnumByValue(enumType, value) {
+        const keys = Object.keys(enumType);
+        for (let i = 0; i < keys.length; i++) {
+            const enumValue = enumType[keys[i]];
+            if (enumValue.value === value) {
+                return enumValue;
             }
         }
         return undefined;
-    }
-
-    static isPlayingCard(cardType) {
-        return cardType === CardType.PLAYING;
     }
 }
